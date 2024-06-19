@@ -6,7 +6,7 @@
 /*   By: fsolomon <fsolomon@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/14 16:07:18 by fsolomon          #+#    #+#             */
-/*   Updated: 2024/06/19 11:15:57 by fsolomon         ###   ########.fr       */
+/*   Updated: 2024/06/19 11:27:20 by fsolomon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,23 +37,23 @@ static char	*extract_line(char *stash)
 	return (line);
 }
 
-static char	*free_stash(char **stash)
+static void	free_stash(char **stash)
 {
 	if (*stash != NULL)
 	{
 		free (*stash);
 		*stash = NULL;
 	}
-	return (NULL);
+	return ;
 }
 
-static char	*check_validity(ssize_t bytes_read, char **stash)
+static void	check_validity(ssize_t bytes_read, char **stash)
 {
 	if (bytes_read < 0)
 		free_stash(stash);
 	if ((bytes_read == 0 && (*stash == NULL || *stash[0] == '\0')))
 		free_stash(stash);
-	return (*stash);
+	return ;
 }
 
 static void	reader(int fd, char **stash, char **temp)
