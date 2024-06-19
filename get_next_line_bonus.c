@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fsolomon <fsolomon@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/06/08 16:05:39 by fsolomon          #+#    #+#             */
-/*   Updated: 2024/06/19 11:15:38 by fsolomon         ###   ########.fr       */
+/*   Created: 2024/06/14 16:07:18 by fsolomon          #+#    #+#             */
+/*   Updated: 2024/06/19 11:15:57 by fsolomon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 static char	*extract_line(char *stash)
 {
@@ -37,23 +37,23 @@ static char	*extract_line(char *stash)
 	return (line);
 }
 
-void	free_stash(char **stash)
+static char	*free_stash(char **stash)
 {
 	if (*stash != NULL)
 	{
 		free (*stash);
 		*stash = NULL;
 	}
-	return ;
+	return (NULL);
 }
 
-void	check_validity(ssize_t bytes_read, char **stash)
+static char	*check_validity(ssize_t bytes_read, char **stash)
 {
 	if (bytes_read < 0)
 		free_stash(stash);
 	if ((bytes_read == 0 && (*stash == NULL || *stash[0] == '\0')))
 		free_stash(stash);
-	return ;
+	return (*stash);
 }
 
 static void	reader(int fd, char **stash, char **temp)
@@ -82,25 +82,25 @@ static void	reader(int fd, char **stash, char **temp)
 
 char	*get_next_line(int fd)
 {
-	static char	*stash;
+	static char	*stash[OPEN_MAX];
 	char		*line;
 	char		*temp;
 
 	line = NULL;
 	temp = NULL;
-	reader(fd, &stash, &temp);
-	if (stash)
+	reader(fd, &stash[fd], &temp);
+	if (stash[fd])
 	{
-		line = extract_line(stash);
+		line = extract_line(stash[fd]);
 		if (!line)
 		{
-			free(stash);
-			stash = NULL;
+			free(stash[fd]);
+			stash[fd] = NULL;
 			return (NULL);
 		}
-		temp = ft_strdup(stash + ft_strlen(line));
-		free(stash);
-		stash = temp;
+		temp = ft_strdup(stash[fd] + ft_strlen(line));
+		free(stash[fd]);
+		stash[fd] = temp;
 	}
 	return (line);
 }
